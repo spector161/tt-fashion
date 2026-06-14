@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ລະບົບຫຼັງບ້ານ - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #f0f2f5; }
+        .admin-container { max-width: 1000px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+        .add-box { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #e0e0e0; }
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: span 2; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .btn-delete { background-color: #ff4d4f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-delete:hover { background-color: #d9363e; }
+        .prod-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .tab-btn { padding: 10px 20px; font-weight: bold; border: none; background: #e4e6eb; border-radius: 6px; cursor: pointer; }
+        .tab-btn.active { background-color: #00D1D1; color: white; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .stat-card { padding: 15px; border-radius: 8px; color: white; text-align: center; }
+        .stat-revenue { background: #2e7d32; }
+        .stat-pending { background: #d97706; }
+        .stat-shipped { background: #0284c7; }
+        .stat-card h4 { margin-bottom: 5px; font-size: 14px; opacity: 0.9; }
+        .stat-card p { font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h2>⚙️ ລະບົບຫຼັງບ້ານ T&T Dashboard</h2>
+        <a href="index.html" class="btn btn-outline">ເບິ່ງໜ້າຮ້ານຄ້າ</a>
+    </div>
+
+    <div class="admin-tabs">
+        <button onclick="switchTab('products-section')" id="tab-prod" class="tab-btn active">📦 ຈັດການສິນຄ້າ</button>
+        <button onclick="switchTab('orders-section')" id="tab-order" class="tab-btn">📋 ຈັດການອໍເດີ້ & ລາຍງານ</button>
+    </div>
+
+    <div id="products-section" class="tab-content">
+        <div class="add-box">
+            <h3>➕ ເພີ່ມສິນຄ້າໃໝ່ (Add Product)</h3><br>
+            <form id="add-form" class="grid-form">
+                <input type="text" id="p-name" placeholder="ຊື່ສິນຄ້າ (Product Name)" required class="form-input">
+                <input type="number" id="p-price" placeholder="ລາຄາ (Price - ₭)" required class="form-input">
+                <input type="number" id="p-stock" placeholder="ຈຳນວນໃນສະຕັອກ (Stock Limit)" required class="form-input" min="0">
+                <select id="p-category" class="form-input">
+                    <option value="Men">ຊາຍ (Men)</option><option value="Women">ຍິງ (Women)</option>
+                    <option value="Hoodie">ຮູ້ດດີ້ (Hoodie)</option><option value="Oversize">ໂອເວີໄຊຣ໌ (Oversize)</option>
+                </select>
+                <input type="text" id="p-img" placeholder="ລິ້ງຮູບພາບ (Image URL)" required class="form-input full-width">
+                <textarea id="p-desc" placeholder="ລາຍລະອຽດສິນຄ້າ (Description)..." required class="form-input full-width" rows="2"></textarea>
+                <label class="full-width"><input type="checkbox" id="p-featured"> 🌟 ສະແດງເປັນສິນຄ້າແນະນຳໜ້າທຳອິດ</label>
+                <button type="submit" class="btn btn-primary full-width">ບັນທຶກສິນຄ້າ (Save Product)</button>
+            </form>
+        </div>
+
+        <h3>📦 ລາຍການສິນຄ້າທັງໝົດ (<span id="prod-count">0</span>)</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead><tr><th>ຮູບ</th><th>ຊື່ສິນຄ້າ</th><th>ໝວດໝູ່</th><th>ລາຄາ</th><th>ສະຕັອກ</th><th>ຈັດການ</th></tr></thead>
+                <tbody id="product-table-body"><tr><td colspan="6" class="text-center">ກຳລັງໂຫລດຂໍ້ມູນ...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="orders-section" class="tab-content" style="display: none;">
+        <h3 class="mb-4">📋 ແຜງຄວບຄຸມອໍເດີ້ & ລາຍງານຍອດຂາຍ</h3>
+        
+        <div class="stats-grid">
+            <div class="stat-card stat-revenue">
+                <h4>📊 ຍອດຂາຍລວມທັງໝົດ</h4>
+                <p id="stat-total-revenue">₭0</p>
+            </div>
+            <div class="stat-card stat-pending">
+                <h4>⏳ ລໍຖ້າການຈັດສົ່ງ</h4>
+                <p id="stat-count-pending">0 ອໍເດີ້</p>
+            </div>
+            <div class="stat-card stat-shipped">
+                <h4>🟢 ຈັດສົ່ງສຳເລັດແລ້ວ</h4>
+                <p id="stat-count-shipped">0 ອໍເດີ້</p>
+            </div>
+        </div>
+
+        <div class="add-box" style="background:#fff;">
+            <input type="text" id="search-order-admin" placeholder="ຄົ້ນຫາອໍເດີ້ດ້ວຍ ຊື່, ລະຫັດອໍເດີ້ ຫຼື ເບີໂທລະສັບ..." class="form-input full-width" oninput="filterAdminOrders()">
+        </div>
+
+        <div id="edit-order-panel" class="add-box" style="display: none; border: 2px solid #00D1D1;">
+            <h3 id="edit-title">EDIT ORDER: </h3><br>
+            <div class="grid-form">
+                <div class="full-width"><label><b>ສິນຄ້າ:</b></label> <span id="edit-prod-name">-</span></div>
+                <div>
+                    <label><b>ສະຖານະອໍເດີ້:</b></label>
+                    <select id="edit-status" class="form-input" style="width:100%;">
+                        <option value="pending">🟡 ລໍຖ້າຈັດສົ່ງ</option>
+                        <option value="shipped">🟢 ຈັດສົ່ງແລ້ວ</option>
+                    </select>
+                </div>
+                <div>
+                    <label><b>ບໍລິສັດຂົນສົ່ງ:</b></label>
+                    <select id="edit-courier" class="form-input" style="width:100%;">
+                        <option value="ANS Express">ANS Express</option><option value="Mixay Express">Mixay Express</option><option value="Anousith Express">Anousith Express</option>
+                    </select>
+                </div>
+                <div class="full-width">
+                    <label><b>ເລກພັດສະດຸ:</b></label>
+                    <input type="text" id="edit-tracking-no" placeholder="ປ້ອນເລກພັດສະດຸຕິດຕາມ..." class="form-input" style="width:100%;">
+                </div>
+                <div class="full-width">
+                    <label><b>🧾 ອັບໂຫຼດໃບເສร็จຮັບຂອງ / ໃບບິນຈັດສົ່ງ (Admin Receipt):</b></label>
+                    <input type="file" id="edit-receipt-upload" accept="image/*" class="form-input" style="width:100%;">
+                </div>
+                
+                <div id="admin-slip-view" class="full-width" style="display:none; text-align:center; padding: 10px; background:#f0f2f5; border-radius:6px;">
+                    <label><b>🧾 ຫຼັກຖານການໂອນເງິນ (ຈາກລູກຄ້າ):</b></label><br>
+                    <img id="admin-slip-img" src="" style="max-width:300px; max-height:300px; border-radius:4px; margin-top:10px; border:1px solid #ccc;">
+                </div>
+
+                <div class="full-width" style="display:flex; gap:10px; margin-top:10px;">
+                    <button id="btn-save-edit" onclick="saveAdminOrder()" class="btn btn-primary" style="flex:1;">💾 ບັນທຶກຂໍ້ມູນ</button>
+                    <button onclick="closeEditPanel()" class="btn btn-outline">ຍົກເລີກ</button>
+                </div>
+            </div>
+        </div>
+
+        <h4>ORDER LIST</h4>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead><tr><th>ລະຫັດ</th><th>ຊື່ລູກຄ້າ / ເບີໂທ</th><th>ລາຍການສິນຄ້າ</th><th>ສະຖານະ</th><th>ຈັດການ</th></tr></thead>
+                <tbody id="admin-orders-table-body"><tr><td colspan="5" class="text-center">ກຳລັງໂຫລດຂໍ້ມູນອໍເດີ້...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAvaNEQcqXWGDQB7PBGtHCfvNcB-OzzVFs",
+        authDomain: "t-tfahion.firebaseapp.com",
+        projectId: "t-tfahion",
+        storageBucket: "t-tfahion.firebasestorage.app",
+        messagingSenderId: "392044085352",
+        appId: "1:392044085352:web:e08f15f841533311493bdd",
+        measurementId: "G-65F0TDRXB9"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    const ADMIN_PASSWORD = "123"; 
+    let currentEditingOrderId = null;
+    let adminOrders = [];
+
+    window.onload = function() {
+        let password = prompt("ກະລຸນາປ້ອນລະຫັດຜ່ານແອັດມິນ:");
+        if (password !== ADMIN_PASSWORD) { 
+            alert("ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!"); 
+            window.location.href = "index.html"; 
+        } else {
+            loadAdminProducts(); 
+            fetchAdminOrders();
+        }
+    };
+
+    function switchTab(sectionId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(sectionId).style.display = 'block';
+        if(sectionId === 'products-section') document.getElementById('tab-prod').classList.add('active');
+        if(sectionId === 'orders-section') document.getElementById('tab-order').classList.add('active');
+    }
+
+    // 🆕 แก้ไขการดึงข้อมูลเพื่อโชว์สต๊อก
+    function loadAdminProducts() {
+        db.collection("products").get().then((snapshot) => {
+            const tbody = document.getElementById('product-table-body');
+            document.getElementById('prod-count').innerText = snapshot.size;
+            
+            if(snapshot.size === 0) { 
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center">ຍັງບໍ່ມີສິນຄ້າ</td></tr>`; 
+                return; 
+            }
+            
+            let html = '';
+            snapshot.forEach(doc => {
+                let p = doc.data();
+                let stock = p.stock !== undefined ? p.stock : 0;
+                let stockColor = stock > 0 ? '#2e7d32' : '#ff4d4f';
+                
+                html += `<tr>
+                            <td><img src="${p.img}" class="prod-img"></td>
+                            <td><b>${p.name}</b><br><small style="color:#777">${p.id}</small></td>
+                            <td>${p.category} ${p.featured ? '🌟' : ''}</td>
+                            <td>₭${p.price.toLocaleString()}</td>
+                            <td>
+                                <b style="color:${stockColor}">${stock}</b>
+                                <button onclick="quickUpdateStock('${p.id}', ${stock})" style="border:none; background:none; cursor:pointer; font-size:16px;" title="ອັບເດດສະຕັອກ">✏️</button>
+                            </td>
+                            <td><button onclick="deleteProduct('${p.id}')" class="btn-delete">ລົບ</button></td>
+                         </tr>`;
+            });
+            tbody.innerHTML = html;
+        });
+    }
+
+    // 🆕 ฟังก์ชันใหม่สำหรับกดปุ่มแก้ไขสต๊อกได้เลยบนตาราง
+    function quickUpdateStock(id, currentStock) {
+        let newStock = prompt(`ປ້ອນຈຳນວນສະຕັອກໃໝ່ສຳລັບรหัส ${id}:`, currentStock);
+        if(newStock !== null && newStock.trim() !== "") {
+            let stockVal = parseInt(newStock);
+            if(!isNaN(stockVal)) {
+                db.collection("products").doc(id).update({ stock: stockVal }).then(() => {
+                    loadAdminProducts(); // รีเฟรชตาราง
+                });
+            } else {
+                alert("ກະລຸນາປ້ອນໂຕເລກເທົ່ານັ້ນ!");
+            }
+        }
+    }
+
+    document.getElementById('add-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = this.querySelector('button'); btn.innerText = "ກຳລັງບັນທຶກ..."; btn.disabled = true;
+        
+        const newId = "PROD-" + Date.now();
+        const newProduct = {
+            id: newId,
+            name: document.getElementById('p-name').value, 
+            price: parseInt(document.getElementById('p-price').value),
+            stock: parseInt(document.getElementById('p-stock').value) || 0, // 🆕 บันทึกค่าลงฐานข้อมูล
+            category: document.getElementById('p-category').value, 
+            img: document.getElementById('p-img').value,
+            desc: document.getElementById('p-desc').value, 
+            featured: document.getElementById('p-featured').checked
+        };
+        
+        db.collection("products").doc(newId).set(newProduct).then(() => {
+            alert("ເພີ່ມສິນຄ້າສຳເລັດແລ້ວ!"); 
+            document.getElementById('add-form').reset();
+            btn.innerText = "ບັນທຶກສິນຄ້າ (Save Product)"; 
+            btn.disabled = false; 
+            loadAdminProducts();
+        }).catch((error) => {
+            alert("ເກີດຂໍ້ຜິດພາດ: " + error.message);
+            btn.innerText = "ບັນທຶກສິນຄ້າ (Save Product)"; btn.disabled = false;
+        });
+    });
+
+    function deleteProduct(id) {
+        if(!confirm("ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບສິນຄ້ານີ້?")) return;
+        db.collection("products").doc(id).delete().then(() => {
+            alert("ລົບສິນຄ້າສຳເລັດແລ້ວ!"); 
+            loadAdminProducts();
+        });
+    }
+
+    // --- ส่วนดึงข้อมูลออเดอร์และการแก้ไขเหมือนเดิม ---
+    function fetchAdminOrders() {
+        db.collection("orders").orderBy("createdAt", "desc").get().then(snapshot => {
+            adminOrders = [];
+            snapshot.forEach(doc => adminOrders.push(doc.data()));
+            calculateReports();
+            filterAdminOrders();
+        }).catch(err => {
+            db.collection("orders").get().then(snapshot => {
+                adminOrders = [];
+                snapshot.forEach(doc => adminOrders.push(doc.data()));
+                calculateReports();
+                filterAdminOrders();
+            });
+        });
+    }
+
+    function calculateReports() {
+        let totalRevenue = 0; let pendingCount = 0; let shippedCount = 0;
+        adminOrders.forEach(o => {
+            totalRevenue += Number(o.price || 0);
+            if (o.status === 'pending') pendingCount++;
+            if (o.status === 'shipped') shippedCount++;
+        });
+        document.getElementById('stat-total-revenue').innerText = '₭' + totalRevenue.toLocaleString();
+        document.getElementById('stat-count-pending').innerText = pendingCount + ' ອໍເດີ້';
+        document.getElementById('stat-count-shipped').innerText = shippedCount + ' ອໍເດີ້';
+    }
+
+    function filterAdminOrders() {
+        const tbody = document.getElementById('admin-orders-table-body');
+        const searchInput = document.getElementById('search-order-admin').value.toLowerCase().trim();
+
+        let filtered = adminOrders.filter(o => 
+            o.id.toLowerCase().includes(searchInput) || 
+            o.customer.toLowerCase().includes(searchInput) ||
+            (o.phone && o.phone.includes(searchInput))
+        );
+        
+        filtered.sort((a, b) => {
+            if (a.status === 'pending' && b.status !== 'pending') return -1;
+            if (a.status !== 'pending' && b.status === 'pending') return 1;
+            return 0;
+        });
+        
+        if(filtered.length === 0) { 
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center">ບໍ່ພົບຂໍ້ມູນອໍເດີ້</td></tr>`; 
+            return; 
+        }
+
+        tbody.innerHTML = filtered.map(o => `
+            <tr style="${o.status === 'pending' ? 'background-color: #fffaf0;' : ''}">
+                <td><b style="color:#00D1D1;">${o.id}</b></td>
+                <td><b>${o.customer}</b><br><small style="color:#777;">${o.phone || '-'}</small></td>
+                <td><small>${o.product}</small></td>
+                <td><span style="font-size:12px; font-weight:bold; color:${o.status === 'pending' ? '#d97706' : '#2e7d32'}">${o.status === 'shipped' ? '🟢 ສົ່ງແລ້ວ' : '🟡 ລໍສົ່ງ'}</span></td>
+                <td><button onclick="openEditOrderPanel('${o.id}')" class="btn btn-dark" style="padding:4px 8px; font-size:11px;">ຈັດການ</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function openEditOrderPanel(id) {
+        currentEditingOrderId = id;
+        const order = adminOrders.find(o => o.id === id);
+        
+        document.getElementById('edit-title').innerText = "EDIT ORDER: " + order.id;
+        document.getElementById('edit-prod-name').innerText = order.product;
+        document.getElementById('edit-status').value = order.status;
+        document.getElementById('edit-courier').value = order.courier === '-' ? 'ANS Express' : order.courier;
+        document.getElementById('edit-tracking-no').value = order.trackingNo || '';
+        
+        if(order.slipImage) {
+            document.getElementById('admin-slip-view').style.display = 'block';
+            document.getElementById('admin-slip-img').src = order.slipImage;
+        } else {
+            document.getElementById('admin-slip-view').style.display = 'none';
+        }
+
+        document.getElementById('edit-receipt-upload').value = "";
+        document.getElementById('edit-order-panel').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function closeEditPanel() { 
+        document.getElementById('edit-order-panel').style.display = 'none'; 
+        currentEditingOrderId = null; 
+    }
+
+    function saveAdminOrder() {
+        if(!currentEditingOrderId) return;
+        const index = adminOrders.findIndex(o => o.id === currentEditingOrderId);
+        if(index !== -1) {
+            const btn = document.getElementById('btn-save-edit');
+            btn.innerText = "ກຳລັງບັນທຶກ..."; btn.disabled = true;
+
+            const fileInput = document.getElementById('edit-receipt-upload');
+            
+            const proceedSave = (base64Receipt) => {
+                const statusVal = document.getElementById('edit-status').value;
+                const updateData = {
+                    status: statusVal,
+                    courier: document.getElementById('edit-courier').value,
+                    trackingNo: document.getElementById('edit-tracking-no').value.toUpperCase().trim(),
+                    timeline: { paid: true, verified: true, packed: true, shipped: (statusVal === 'shipped') }
+                };
+
+                if(base64Receipt) { updateData.adminReceipt = base64Receipt; }
+
+                db.collection("orders").doc(currentEditingOrderId).update(updateData).then(() => {
+                    alert(`💾 ບັນທຶກການອັບເດດອໍເດີ້ສຳເລັດ!`);
+                    btn.innerText = "💾 ບັນທຶກຂໍ້ມູນ"; btn.disabled = false;
+                    closeEditPanel(); 
+                    fetchAdminOrders(); 
+                }).catch(err => {
+                    alert("ເກີດຂໍ້ຜິດພາດ: " + err.message);
+                    btn.innerText = "💾 ບັນທຶກຂໍ້ມູນ"; btn.disabled = false;
+                });
+            };
+
+            if (fileInput.files && fileInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) { proceedSave(e.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { proceedSave(null); }
+        }
+    }
+</script>
+</body>
+</html>
