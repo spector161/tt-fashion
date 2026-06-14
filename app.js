@@ -188,6 +188,21 @@ function renderFeaturedProducts() {
         </div>`;
     }).join('');
 }
+// ฟังก์ชันสำหรับเปิด-ปิดเมนูในมือถือ
+function toggleMobileMenu() {
+    const navLinks = document.getElementById('navLinks');
+    navLinks.classList.toggle('active');
+}
+
+// ปรับแต่งฟังก์ชันเปลี่ยนหน้าให้ปิดเมนูอัตโนมัติเมื่อกดเลือกเมนูเสร็จ
+const originalNavigate = navigate;
+navigate = function(pageId) {
+    originalNavigate(pageId);
+    const navLinks = document.getElementById('navLinks');
+    if (navLinks) {
+        navLinks.classList.remove('active'); // ปิดเมนูเมื่อย้ายหน้า
+    }
+}
 
 function renderShopProducts(productsToRender) {
     const grid = document.getElementById('shop-products-grid');

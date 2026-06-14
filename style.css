@@ -264,9 +264,53 @@ h2, h3, h4, h5, h6 {
 @media (max-width: 992px) {
     .grid-4 { grid-template-columns: repeat(2, 1fr); }
 }
+/* --- ส่วนปุ่มเปิดเมนูในหน้าจอคอมพิวเตอร์ให้ซ่อนไว้ --- */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 26px;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+/* --- จัดการหน้าจอมือถือ (Responsive Mobile) --- */
 @media (max-width: 576px) {
-    .grid-4 { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
+    .grid-4 { 
+        grid-template-columns: 1fr; 
+    }
+    
+    .header-container {
+        position: relative;
+        justify-content: space-between;
+    }
+
+    /* แสดงปุ่มสามขีดในมือถือ */
+    .menu-toggle { 
+        display: block; 
+    }
+
+    /* ปรับแต่งเมนูของมือถือให้แสดงผลสไลด์ลงมา */
+    .nav-links {
+        display: none; /* ซ่อนไว้ก่อนเริ่มต้น */
+        flex-direction: column;
+        position: absolute;
+        top: 80px; /* ระยะให้อยู่ใต้ header พอดี */
+        left: 0;
+        width: 100%;
+        background-color: var(--secondary-color);
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        gap: 15px;
+        text-align: center;
+        z-index: 999;
+    }
+
+    /* เมื่อกดปุ่ม แถบเมนูจะแสดงผลทันที */
+    .nav-links.active {
+        display: flex;
+    }
 }
 
 .grid-3 {
