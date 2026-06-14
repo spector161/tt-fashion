@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T&T Fashion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo-area" onclick="navigate('home')">
+                <div class="logo">
+                    <img src="https://i.postimg.cc/hPRXjRy1/logo2.png" alt="logo">
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="#" onclick="navigate('home')">ໜ້າຫຼັກ</a>
+                <a href="#" onclick="navigate('shop')">ຮ້ານຄ້າ</a>
+                <a href="#" onclick="navigate('my-orders')">ອໍເດີ້</a>
+                <a href="#" onclick="navigate('about')">ກ່ຽວກັບເຮົາ</a>
+                <a href="https://wa.me/message/7QLUAS7U6RDPG1">ຕິດຕໍ່ເຮົາ</a>
+            </nav>
+            <div class="header-actions">
+                <span class="cart-btn" onclick="navigate('cart')">
+                    🛒 ກະຕ່າ (<span id="cart-icon-count">0</span>)
+                </span>
+                <span class="user-avatar" id="display-user-header" onclick="navigate('my-orders')">👤</span>
+            </div>
+        </div>
+    </header>
+
+    <main id="home" class="page-section active">
+        <section class="hero-banner">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h2>ແຟຊັ່ນທີ່ບອກຄວາມເປັນເຈົ້າ</h2>
+                <p>ຄົ້ນພົບຄໍເລັກຊັນໃໝ່ New Collection 2026</p>
+                <button onclick="navigate('shop')" class="btn btn-primary">ຊັອບເລີຍ</button>
+            </div>
+        </section>
+
+        <section class="container section-padding text-center">
+            <h3 class="section-title">ໝວດໝູ່ສິນຄ້າ</h3>
+            <div class="category-buttons">
+                <button onclick="filterCategory('Men')" class="btn-category">ຊາຍ (Men)</button>
+                <button onclick="filterCategory('Women')" class="btn-category">ຍິງ (Women)</button>
+                <button onclick="filterCategory('Oversize')" class="btn-category">ໂອເວີໄຊຣ໌ (Oversize)</button>
+                <button onclick="filterCategory('Hoodie')" class="btn-category">ຮູ້ດດີ້ (Hoodie)</button>
+            </div>
+        </section>
+
+        <section class="container section-padding">
+            <h3 class="section-title text-center">ສິນຄ້າຍອດນິຍົມ</h3>
+            <div id="featured-products-grid" class="products-grid grid-4"></div>
+        </section>
+    </main>
+
+    <main id="shop" class="page-section container section-padding">
+        <h2 class="page-title">ລາຍການສິນຄ້າທັງໝົດ</h2>
+        <div class="shop-layout">
+            <aside class="shop-sidebar">
+                <div class="filter-card">
+                    <div class="filter-group">
+                        <h4 class="filter-heading">ຄົ້ນຫາສິນຄ້າ</h4>
+                        <input type="text" id="search-input" placeholder="ພິມຊື່ສິນຄ້າ..." class="form-input" oninput="applyFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <h4 class="filter-heading">ໝວດໝູ່</h4>
+                        <div id="category-filters" class="checkbox-list">
+                            <label><input type="checkbox" value="Men" onchange="applyFilters()"> ຊາຍ (Men)</label>
+                            <label><input type="checkbox" value="Women" onchange="applyFilters()"> ຍິງ (Women)</label>
+                            <label><input type="checkbox" value="Hoodie" onchange="applyFilters()"> ຮູ້ດດີ້ (Hoodie)</label>
+                            <label><input type="checkbox" value="Oversize" onchange="applyFilters()"> ໂອເວີໄຊຣ໌ (Oversize)</label>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <div class="shop-content">
+                <div id="shop-products-grid" class="products-grid grid-3"></div>
+            </div>
+        </div>
+    </main>
+
+    <main id="product" class="page-section container section-padding">
+        <button onclick="navigate('shop')" class="back-link">← ກັບຄືນໜ້າຮ້ານຄ້າ</button>
+        <div id="product-detail-container"></div>
+    </main>
+
+    <main id="cart" class="page-section container-narrow section-padding">
+        <h2 class="page-title">ກະຕ່າສິນຄ້າຂອງທ່ານ</h2>
+        <div class="cart-card">
+            <div class="cart-headers">
+                <div class="header-prod">ສິນຄ້າ</div>
+                <div class="header-qty">ຈຳນວນ</div>
+                <div class="header-price">ລາຄາ</div>
+            </div>
+            <div id="cart-items-container"></div>
+            <div class="cart-summary">
+                <div class="summary-line">
+                    <span class="summary-label">ລວມທັງໝົດ:</span>
+                    <span class="summary-value">₭<span id="cart-total-price">0</span></span>
+                </div>
+                <button onclick="goToCheckout()" class="btn btn-dark btn-checkout">ໄປໜ້າຊຳລະເງິນ</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="checkout" class="page-section container-narrow section-padding">
+        <h2 class="page-title text-center">ກວດສອບ ແລະ ຊຳລະເງິນ</h2>
+        <div class="checkout-layout">
+            <div class="checkout-form-card">
+                <form id="checkout-form" onsubmit="submitOrder(event)">
+                    <h3 class="card-subtitle">ຂໍ້ມູນການຈັດສົ່ງ</h3>
+                    <div class="form-group">
+                        <label class="form-label">ຊື່ ແລະ ນາມສະກຸນ</label>
+                        <input type="text" id="checkout-name" placeholder="ກະລຸນາປ້ອນຊື່ຂອງທ່ານ" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ເບີໂທລະສັບ</label>
+                        <input type="tel" id="checkout-phone" placeholder="ກະລຸນາປ້ອນເບີໂທ (ໃຊ້ເຂົ້າສູ່ລະບົບ)" required class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ທີ່ຢູ່ຈັດສົ່ງສິນຄ້າ</label>
+                        <textarea id="checkout-address" rows="3" placeholder="ບ້ານ, ເມືອງ, ແຂວງ ແລະ ລາຍລະອຽດທີ່ຢູ່..." required class="form-input"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="checkout-payment-card">
+                <h3 class="card-subtitle text-center">การຊຳລະເງິນ</h3>
+                <p class="payment-total text-center">ຍອດຊຳລະທັງໝົດ: <strong id="checkout-total-display">₭<span id="checkout-total-price-summary">0</span></strong></p>
+                <div class="qr-code-box">
+                    <img id="qr-image" src="https://i.postimg.cc/V6S18g32/my-qrcode.jpg" alt="Payment QR" class="qr-img">
+                    <span class="qr-subtext">ສະແກນ QR Code ເພື່ອໂອນເງິນ</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label text-center block">ອັບໂຫຼດສະລິບຫຼັກຖານ</label>
+                    <input type="file" id="slip-upload" accept="image/*" required class="form-file-input">
+                </div>
+                <button type="submit" id="btn-submit-order" form="checkout-form" class="btn btn-primary btn-full">ຢືນຢັນການສັ່ງຊື້</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="my-orders" class="page-section container-narrow section-padding">
+        <h2 class="page-title text-center">📦 ອໍເດີ້ຂອງຂ້ອຍ (MY ORDERS)</h2>
+        
+        <div id="login-section" class="filter-card text-center" style="max-width: 400px; margin: 0 auto;">
+            <h3>ເຂົ້າສູ່ລະບົບເພື່ອເບິ່ງອໍເດີ້</h3>
+            <p style="font-size: 13px; color: #757575; margin-top: 5px;">ປ້ອນເບີໂທລະສັບດຽວກັນກັບຕອນສັ່ງຊື້ສິນຄ້າ</p>
+            <input type="tel" id="login-phone" placeholder="ປ້ອນເບີໂທລະສັບ..." class="form-input" style="margin: 15px 0; width: 100%;">
+            <button onclick="loginCustomer()" class="btn btn-primary btn-full">ເຂົ້າສູ່ລະບົບ</button>
+        </div>
+
+        <div id="orders-content" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <p>ບັນຊີຜູ້ໃຊ້ (ເບີໂທ): <span id="display-user-phone" style="font-weight:bold; color:var(--primary-color);"></span></p>
+                <button onclick="logoutCustomer()" class="btn btn-outline" style="padding: 5px 15px; font-size: 12px;">ອອກຈາກລະບົບ</button>
+            </div>
+
+            <div class="filter-card mb-4" style="margin-bottom: 20px;">
+                <input type="text" id="search-my-order-input" placeholder="ຄົ້ນຫາອໍເດີ້ຂອງຂ້ອຍດ້ວຍ ລະຫັດອໍເດີ້..." class="form-input" style="width: 100%; border-radius: 4px;" oninput="renderMyOrdersList()">
+            </div>
+            <div id="my-orders-list-container" class="space-y-4"></div>
+        </div>
+    </main>
+
+    <main id="order-detail" class="page-section container-narrow section-padding">
+        <button onclick="navigate('my-orders')" class="back-link">← ກັບຄືນໜ້າອໍເດີ້ຂອງຂ້ອຍ</button>
+        <h2 class="page-title text-center">🧾 ລາຍລະອຽດອໍເດີ້ (ORDER DETAIL)</h2>
+        <div id="customer-order-detail-container" class="cart-card" style="max-width: 600px; margin: 0 auto;"></div>
+    </main>
+
+    <footer id="about" class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h1 class="logo-text">T&T FASHION</h1>
+                <p class="footer-about">ຈຸດໝາຍປາຍທາງແຫ່ງແຟຊັ່ນທັນສະໄໝ ແລະ ຄວາມສະບາຍມາໄວ້ໃນບ່ອນດຽວກັນ.</p>
+            </div>
+            <div class="footer-col">
+                <h4>ເມນູຕ່າງໆ</h4>
+                <ul class="footer-links-list">
+                    <li><a href="#" onclick="navigate('home')">ໜ້າຫຼັກ</a></li>
+                    <li><a href="#" onclick="navigate('shop')">ຮ້ານຄ້າ</a></li>
+                    <li><a href="#" onclick="navigate('my-orders')">ອໍເດີ້ຂອງຂ້ອຍ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>ຕິດຕາມພວກເຮົາ</h4>
+                <ul class="footer-links-list">
+                    <li><a href="https://www.facebook.com/share/1D7z612ayU/?mibextid=wwXIfr">Facebook</a></li>
+                    <li><a href="https://www.instagram.com/tony.ppz?igsh=cjBveWJicjNpbmhm&utm_source=qr">Instagram</a></li>
+                    <li><a href="https://www.tiktok.com/@tony_ppz?_r=1&_t=ZS-977wdGXuDJt">Tiktok</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>ຂໍ້ມູນຕິດຕໍ່</h4>
+                <p class="footer-contact-info">ອີເມວ: support@shop.com<br>ເບີໂທ: +856 2029810502<br>ນະຄອນຫຼວງວຽງຈັນ, ສປປ ລາວ</p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            &copy; 2026 T&T Fashion. ສະຫງວນລິຂະສິດທັງໝົດ.
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+   <script src="app.js"></script>
+</body>
+</html>
