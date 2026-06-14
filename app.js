@@ -188,20 +188,27 @@ function renderFeaturedProducts() {
         </div>`;
     }).join('');
 }
-// ฟังก์ชันสำหรับเปิด-ปิดเมนูในมือถือ
 function toggleMobileMenu() {
-    const navLinks = document.getElementById('navLinks');
-    navLinks.classList.toggle('active');
+    const navLink = document.getElementById('navLink');
+    navLink.classList.toggle('active');
+    
+    // เพิ่มการจัดการปุ่ม Toggle ให้เปลี่ยนไอคอน (ถ้ามี)
+    const toggleBtn = document.querySelector('.menu-toggle');
+    if(navLink.classList.contains('active')) {
+        toggleBtn.innerHTML = '✕'; // เปลี่ยนเป็นกากบาทเมื่อเปิด
+    } else {
+        toggleBtn.innerHTML = '☰'; // เปลี่ยนกลับเป็นขีด
+    }
 }
 
-// ปรับแต่งฟังก์ชันเปลี่ยนหน้าให้ปิดเมนูอัตโนมัติเมื่อกดเลือกเมนูเสร็จ
+// ปิดเมนูเมื่อกดเลือกหน้า
 const originalNavigate = navigate;
 navigate = function(pageId) {
     originalNavigate(pageId);
-    const navLinks = document.getElementById('navLinks');
-    if (navLinks) {
-        navLinks.classList.remove('active'); // ปิดเมนูเมื่อย้ายหน้า
-    }
+    const navLink = document.getElementById('navLink');
+    const toggleBtn = document.querySelector('.menu-toggle');
+    navLink.classList.remove('active');
+    toggleBtn.innerHTML = '☰';
 }
 
 function renderShopProducts(productsToRender) {

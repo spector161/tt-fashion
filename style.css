@@ -275,41 +275,48 @@ h2, h3, h4, h5, h6 {
     padding: 5px 10px;
 }
 
-/* --- จัดการหน้าจอมือถือ (Responsive Mobile) --- */
 @media (max-width: 576px) {
-    .grid-4 { 
-        grid-template-columns: 1fr; 
-    }
-    
-    .header-container {
-        position: relative;
-        justify-content: space-between;
-    }
-
-    /* แสดงปุ่มสามขีดในมือถือ */
-    .menu-toggle { 
-        display: block; 
+    .menu-toggle {
+        display: block !important;
+        font-size: 28px;
+        color: var(--primary-color);
+        background: none; border: none;
+        cursor: pointer; z-index: 1000;
     }
 
-    /* ปรับแต่งเมนูของมือถือให้แสดงผลสไลด์ลงมา */
     .nav-links {
-        display: none; /* ซ่อนไว้ก่อนเริ่มต้น */
+        display: flex !important;
         flex-direction: column;
-        position: absolute;
-        top: 80px; /* ระยะให้อยู่ใต้ header พอดี */
-        left: 0;
-        width: 100%;
-        background-color: var(--secondary-color);
-        padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        gap: 15px;
-        text-align: center;
+        position: fixed;
+        top: 80px; /* ใต้ header */
+        right: -100%; /* ซ่อนไว้ทางขวา */
+        width: 80%; /* ไม่เต็มจอ ดูทันสมัยกว่า */
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px); /* เอฟເຟກຝ້າ (Glassmorphism) */
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        padding-top: 40px;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
         z-index: 999;
     }
 
-    /* เมื่อกดปุ่ม แถบเมนูจะแสดงผลทันที */
     .nav-links.active {
-        display: flex;
+        right: 0; /* เลื่อนเข้ามา */
+    }
+
+    .nav-links a {
+        padding: 20px 30px;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--text-color);
+        text-decoration: none;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s;
+    }
+
+    .nav-links a:hover {
+        background-color: #f8f9fa;
+        color: var(--primary-color);
     }
 }
 
