@@ -17,6 +17,8 @@
         th { background-color: #f4f4f4; }
         .btn-delete { background-color: #ff4d4f; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
         .btn-delete:hover { background-color: #d9363e; }
+        .btn-edit-prod { background-color: #1890ff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        .btn-edit-prod:hover { background-color: #096dd9; }
         .prod-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
         .admin-tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
         .tab-btn { padding: 10px 20px; font-weight: bold; border: none; background: #e4e6eb; border-radius: 6px; cursor: pointer; }
@@ -41,7 +43,7 @@
 
     <div class="admin-tabs">
         <button onclick="switchTab('products-section')" id="tab-prod" class="tab-btn active">📦 ຈັດການສິນຄ້າ</button>
-        <button onclick="switchTab('orders-section')" id="tab-order" class="tab-btn">📋 ຈັດການອໍເດີ້ & ลາຍງານ</button>
+        <button onclick="switchTab('orders-section')" id="tab-order" class="tab-btn">📋 ຈັດການອໍເດີ້ & ລາຍງານ</button>
     </div>
 
     <div id="products-section" class="tab-content">
@@ -62,10 +64,30 @@
             </form>
         </div>
 
+        <div id="edit-product-panel" class="add-box" style="display: none; border: 2px solid #1890ff; background-color: #f0f8ff;">
+            <h3>✏️ ແກ້ໄຂສິນຄ້າ (Edit Product) <span id="edit-p-id" style="color:gray; font-size:14px;"></span></h3><br>
+            <form id="edit-product-form" class="grid-form">
+                <input type="text" id="ep-name" placeholder="ຊື່ສິນຄ້າ (Product Name)" required class="form-input">
+                <input type="number" id="ep-price" placeholder="ລາຄາ (Price - ₭)" required class="form-input">
+                <input type="number" id="ep-stock" placeholder="ຈຳນວນໃນສະຕັອກ (Stock Limit)" required class="form-input" min="0">
+                <select id="ep-category" class="form-input">
+                    <option value="Men">ຊາຍ (Men)</option><option value="Women">ຍິງ (Women)</option>
+                    <option value="Hoodie">ຮູ້ດດີ້ (Hoodie)</option><option value="Oversize">ໂອເວີໄຊຣ໌ (Oversize)</option>
+                </select>
+                <input type="text" id="ep-img" placeholder="ລິ້ງຮູບພາບ (Image URL)" required class="form-input full-width">
+                <textarea id="ep-desc" placeholder="ລາຍລະອຽດສິນຄ້າ (Description)..." required class="form-input full-width" rows="2"></textarea>
+                <label class="full-width"><input type="checkbox" id="ep-featured"> 🌟 ສະແດງເປັນສິນຄ້າແນະນຳໜ້າທຳອິດ</label>
+                <div class="full-width" style="display:flex; gap:10px; margin-top:10px;">
+                    <button type="submit" class="btn btn-primary" style="flex:1; background-color: #1890ff;">💾 ບັນທຶກການແກ້ໄຂ</button>
+                    <button type="button" onclick="closeEditProductPanel()" class="btn btn-outline">ຍົກເລີກ</button>
+                </div>
+            </form>
+        </div>
+
         <h3>📦 ລາຍການສິນຄ້າທັງໝົດ (<span id="prod-count">0</span>)</h3>
         <div style="overflow-x: auto;">
             <table>
-                <thead><tr><th>ຮູບ</th><th>ຊື່ສິນຄ້າ</th><th>ໝວດໝູ່</th><th>ລາຄา</th><th>ສະຕັອກ</th><th>ຈັດການ</th></tr></thead>
+                <thead><tr><th>ຮູບ</th><th>ຊື່ສິນຄ້າ</th><th>ໝວດໝູ່</th><th>ລາຄາ</th><th>ສະຕັອກ</th><th>ຈັດການ</th></tr></thead>
                 <tbody id="product-table-body"><tr><td colspan="6" class="text-center">ກຳລັງໂຫລດຂໍ້ມູນ...</td></tr></tbody>
             </table>
         </div>
@@ -109,7 +131,7 @@
                     </select>
                 </div>
                 <div>
-                    <label><b>ບໍລິສັດขົນສົ່ງ:</b></label>
+                    <label><b>ບໍລິສັດຂົນສົ່ງ:</b></label>
                     <select id="edit-courier" class="form-input" style="width:100%;">
                         <option value="ANS Express">ANS Express</option><option value="Mixay Express">Mixay Express</option><option value="Anousith Express">Anousith Express</option>
                     </select>
@@ -119,7 +141,7 @@
                     <input type="text" id="edit-tracking-no" placeholder="ປ້ອນເລກພັດສະດຸຕິດຕາມ..." class="form-input" style="width:100%;">
                 </div>
                 <div class="full-width">
-                    <label><b>🧾 ອັບໂຫຼดໃບເສร็จຮັບຂອງ / ໃບບິນຈັດສົ່ງ (Admin Receipt):</b></label>
+                    <label><b>🧾 ອັບໂຫຼດໃບເສร็จຮັບຂອງ / ໃບບິນຈັດສົ່ງ (Admin Receipt):</b></label>
                     <input type="file" id="edit-receipt-upload" accept="image/*" class="form-input" style="width:100%;">
                 </div>
                 
@@ -166,6 +188,7 @@
 
     const ADMIN_PASSWORD = "123"; 
     let currentEditingOrderId = null;
+    let currentEditingProductId = null; // ตัวแปรเก็บรหัสสินค้าที่กำลังแก้ไข
     let adminOrders = [];
 
     window.onload = function() {
@@ -203,6 +226,7 @@
                 let stock = p.stock !== undefined ? p.stock : 0;
                 let stockColor = stock > 0 ? '#2e7d32' : '#ff4d4f';
                 
+                // เพิ่มปุ่มแก้ไขสินค้า 🆕
                 html += `<tr>
                             <td><img src="${p.img}" class="prod-img"></td>
                             <td><b>${p.name}</b><br><small style="color:#777">${p.id}</small></td>
@@ -212,7 +236,10 @@
                                 <b style="color:${stockColor}">${stock}</b>
                                 <button onclick="quickUpdateStock('${p.id}', ${stock})" style="border:none; background:none; cursor:pointer; font-size:16px;" title="ອັບເດດສະຕັອກ">✏️</button>
                             </td>
-                            <td><button onclick="deleteProduct('${p.id}')" class="btn-delete">ລົບ</button></td>
+                            <td>
+                                <button onclick="openEditProduct('${p.id}')" class="btn-edit-prod">ແກ້ໄຂ</button>
+                                <button onclick="deleteProduct('${p.id}')" class="btn-delete">ລົບ</button>
+                            </td>
                          </tr>`;
             });
             tbody.innerHTML = html;
@@ -220,7 +247,7 @@
     }
 
     function quickUpdateStock(id, currentStock) {
-        let newStock = prompt(`ป້ອນຈຳນວນສະຕັອກໃໝ່ສຳລັບรหัส ${id}:`, currentStock);
+        let newStock = prompt(`ປ້ອນຈຳນວນສະຕັອກໃໝ່ສຳລັບລະຫັດ ${id}:`, currentStock);
         if(newStock !== null && newStock.trim() !== "") {
             let stockVal = parseInt(newStock);
             if(!isNaN(stockVal)) {
@@ -233,6 +260,7 @@
         }
     }
 
+    // -- ເພີ່ມສິນຄ້າ --
     document.getElementById('add-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = this.querySelector('button'); btn.innerText = "ກຳລັງບັນທຶກ..."; btn.disabled = true;
@@ -257,10 +285,64 @@
             loadAdminProducts();
         }).catch((error) => {
             alert("ເກີດຂໍ້ຜິດພາດ: " + error.message);
-            btn.innerText = "ບັນທຶกສິນຄ້າ (Save Product)"; btn.disabled = false;
+            btn.innerText = "ບັນທຶກສິນຄ້າ (Save Product)"; btn.disabled = false;
         });
     });
 
+    // -- ຟັງຊັນການແກ້ໄຂສິນຄ້າ 🆕 --
+    function openEditProduct(id) {
+        currentEditingProductId = id;
+        db.collection("products").doc(id).get().then(doc => {
+            if(doc.exists) {
+                let p = doc.data();
+                document.getElementById('edit-p-id').innerText = `- ${id}`;
+                document.getElementById('ep-name').value = p.name;
+                document.getElementById('ep-price').value = p.price;
+                document.getElementById('ep-stock').value = p.stock || 0;
+                document.getElementById('ep-category').value = p.category;
+                document.getElementById('ep-img').value = p.img;
+                document.getElementById('ep-desc').value = p.desc;
+                document.getElementById('ep-featured').checked = p.featured || false;
+                
+                document.getElementById('edit-product-panel').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+
+    function closeEditProductPanel() {
+        document.getElementById('edit-product-panel').style.display = 'none';
+        currentEditingProductId = null;
+    }
+
+    document.getElementById('edit-product-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        if(!currentEditingProductId) return;
+        const btn = this.querySelector('button[type="submit"]'); 
+        btn.innerText = "ກຳລັງບັນທຶກ..."; btn.disabled = true;
+        
+        const updatedProduct = {
+            name: document.getElementById('ep-name').value, 
+            price: parseInt(document.getElementById('ep-price').value),
+            stock: parseInt(document.getElementById('ep-stock').value) || 0,
+            category: document.getElementById('ep-category').value, 
+            img: document.getElementById('ep-img').value,
+            desc: document.getElementById('ep-desc').value, 
+            featured: document.getElementById('ep-featured').checked
+        };
+        
+        db.collection("products").doc(currentEditingProductId).update(updatedProduct).then(() => {
+            alert("ແກ້ໄຂສິນຄ້າສຳເລັດແລ້ວ!"); 
+            btn.innerText = "💾 ບັນທຶກການແກ້ໄຂ"; btn.disabled = false;
+            closeEditProductPanel();
+            loadAdminProducts(); // โหลดตารางใหม่หลังแก้ไข
+        }).catch((error) => {
+            alert("ເກີດຂໍ້ຜິດພາດ: " + error.message);
+            btn.innerText = "💾 ບັນທຶກການແກ້ໄຂ"; btn.disabled = false;
+        });
+    });
+
+    // -- ລົບສິນຄ້າ --
     function deleteProduct(id) {
         if(!confirm("ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລົບສິນຄ້ານີ້?")) return;
         db.collection("products").doc(id).delete().then(() => {
@@ -318,14 +400,11 @@
             return; 
         }
 
-        // -------------------------------------------------------------
-        // แก้ไขส่วนนี้เพื่อให้แสดงที่อยู่จัดส่งในแถบรายการออเดอร์หน้าแรกทันที 🆕
-        // -------------------------------------------------------------
         tbody.innerHTML = filtered.map(o => `
             <tr style="${o.status === 'pending' ? 'background-color: #fffaf0;' : ''}">
                 <td><b style="color:#00D1D1;">${o.id}</b></td>
                 <td>
-                    <b>👤 ລູกຄ້າ: ${o.customer}</b><br>
+                    <b>👤 ລູກຄ້າ: ${o.customer}</b><br>
                     <small style="color:#666;">📞 ເບີໂທ: ${o.phone || '-'}</small><br>
                     <div style="margin-top: 4px; padding: 4px 6px; background: #f0f2f5; border-radius: 4px; display: inline-block; max-width: 250px; font-size: 11px; color: #444; word-break: break-all;">
                         📍 <b>ທີ່ຢູ່:</b> ${o.address || 'ບໍ່ມີຂໍ້ມູນທີ່ຢູ່'}
@@ -389,7 +468,7 @@
                 if(base64Receipt) { updateData.adminReceipt = base64Receipt; }
 
                 db.collection("orders").doc(currentEditingOrderId).update(updateData).then(() => {
-                    alert(`💾 ບັນທຶກການອັບເດດอໍເດີ້ສຳເລັດ!`);
+                    alert(`💾 ບັນທຶກການອັບເດດອໍເດີ້ສຳເລັດ!`);
                     btn.innerText = "💾 ບັນທຶກຂໍ້ມູນ"; btn.disabled = false;
                     closeEditPanel(); 
                     fetchAdminOrders(); 
