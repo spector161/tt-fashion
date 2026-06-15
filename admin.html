@@ -41,7 +41,7 @@
 
     <div class="admin-tabs">
         <button onclick="switchTab('products-section')" id="tab-prod" class="tab-btn active">📦 ຈັດການສິນຄ້າ</button>
-        <button onclick="switchTab('orders-section')" id="tab-order" class="tab-btn">📋 ຈັດການອໍເດີ້ & ລາຍງານ</button>
+        <button onclick="switchTab('orders-section')" id="tab-order" class="tab-btn">📋 ຈັດການອໍເດີ້ & ลາຍງານ</button>
     </div>
 
     <div id="products-section" class="tab-content">
@@ -65,7 +65,7 @@
         <h3>📦 ລາຍການສິນຄ້າທັງໝົດ (<span id="prod-count">0</span>)</h3>
         <div style="overflow-x: auto;">
             <table>
-                <thead><tr><th>ຮູບ</th><th>ຊື່ສິນຄ້າ</th><th>ໝວດໝູ່</th><th>ລາຄາ</th><th>ສະຕັອກ</th><th>ຈັດການ</th></tr></thead>
+                <thead><tr><th>ຮູບ</th><th>ຊື່ສິນຄ້າ</th><th>ໝວດໝູ່</th><th>ລາຄา</th><th>ສະຕັອກ</th><th>ຈັດການ</th></tr></thead>
                 <tbody id="product-table-body"><tr><td colspan="6" class="text-center">ກຳລັງໂຫລດຂໍ້ມູນ...</td></tr></tbody>
             </table>
         </div>
@@ -98,6 +98,10 @@
             <div class="grid-form">
                 <div class="full-width"><label><b>ສິນຄ້າ:</b></label> <span id="edit-prod-name">-</span></div>
                 <div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="font-weight: bold;">ທີ່ຢູ່ຈັດສົ່ງ:</label>
+                        <textarea id="admin-order-address" readonly rows="3" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; background-color: #f9f9f9;"></textarea>
+                    </div>
                     <label><b>ສະຖານະອໍເດີ້:</b></label>
                     <select id="edit-status" class="form-input" style="width:100%;">
                         <option value="pending">🟡 ລໍຖ້າຈັດສົ່ງ</option>
@@ -105,9 +109,9 @@
                     </select>
                 </div>
                 <div>
-                    <label><b>ບໍລິສັດຂົນສົ່ງ:</b></label>
+                    <label><b>ບໍລິສັດขົນສົ່ງ:</b></label>
                     <select id="edit-courier" class="form-input" style="width:100%;">
-                        <option value="ANS Express">HAL Express</option><option value="Mixay Express">Mixay Express</option><option value="Anousith Express">Anousith Express</option>
+                        <option value="ANS Express">ANS Express</option><option value="Mixay Express">Mixay Express</option><option value="Anousith Express">Anousith Express</option>
                     </select>
                 </div>
                 <div class="full-width">
@@ -115,12 +119,12 @@
                     <input type="text" id="edit-tracking-no" placeholder="ປ້ອນເລກພັດສະດຸຕິດຕາມ..." class="form-input" style="width:100%;">
                 </div>
                 <div class="full-width">
-                    <label><b>🧾 ອັບໂຫຼດໃບເສร็จຮັບຂອງ / ໃບບິນຈັດສົ່ງ (Admin Receipt):</b></label>
+                    <label><b>🧾 ອັບໂຫຼดໃບເສร็จຮັບຂອງ / ໃບບິນຈັດສົ່ງ (Admin Receipt):</b></label>
                     <input type="file" id="edit-receipt-upload" accept="image/*" class="form-input" style="width:100%;">
                 </div>
                 
                 <div id="admin-slip-view" class="full-width" style="display:none; text-align:center; padding: 10px; background:#f0f2f5; border-radius:6px;">
-                    <label><b>🧾 ຫຼັກຖານການໂອນເງິນ (ຈາກລູກຄ້າ):</b></label><br>
+                    <label><b>🧾 ຫຼັກຖານການໂອນເງิน (ຈາກລູກຄ້າ):</b></label><br>
                     <img id="admin-slip-img" src="" style="max-width:300px; max-height:300px; border-radius:4px; margin-top:10px; border:1px solid #ccc;">
                 </div>
 
@@ -134,7 +138,7 @@
         <h4>ORDER LIST</h4>
         <div style="overflow-x: auto;">
             <table>
-                <thead><tr><th>ລະຫັດ</th><th>ຊື່ລູກຄ້າ / ເບີໂທ</th><th>ລາຍການສິນຄ້າ</th><th>ສະຖານະ</th><th>ຈັດການ</th></tr></thead>
+                <thead><tr><th>ລະຫັດ</th><th>ຂໍ້ມູນລູກຄ້າ & ທີ່ຢູ່ຈັດສົ່ງ</th><th>ລາຍການສິນຄ້າ</th><th>ສະຖານະ</th><th>ຈັດການ</th></tr></thead>
                 <tbody id="admin-orders-table-body"><tr><td colspan="5" class="text-center">ກຳລັງໂຫລດຂໍ້ມູນອໍເດີ້...</td></tr></tbody>
             </table>
         </div>
@@ -183,7 +187,6 @@
         if(sectionId === 'orders-section') document.getElementById('tab-order').classList.add('active');
     }
 
-    // 🆕 แก้ไขการดึงข้อมูลเพื่อโชว์สต๊อก
     function loadAdminProducts() {
         db.collection("products").get().then((snapshot) => {
             const tbody = document.getElementById('product-table-body');
@@ -216,14 +219,13 @@
         });
     }
 
-    // 🆕 ฟังก์ชันใหม่สำหรับกดปุ่มแก้ไขสต๊อกได้เลยบนตาราง
     function quickUpdateStock(id, currentStock) {
-        let newStock = prompt(`ປ້ອນຈຳນວນສະຕັອກໃໝ່ສຳລັບรหัส ${id}:`, currentStock);
+        let newStock = prompt(`ป້ອນຈຳນວນສະຕັອກໃໝ່ສຳລັບรหัส ${id}:`, currentStock);
         if(newStock !== null && newStock.trim() !== "") {
             let stockVal = parseInt(newStock);
             if(!isNaN(stockVal)) {
                 db.collection("products").doc(id).update({ stock: stockVal }).then(() => {
-                    loadAdminProducts(); // รีเฟรชตาราง
+                    loadAdminProducts(); 
                 });
             } else {
                 alert("ກະລຸນາປ້ອນໂຕເລກເທົ່ານັ້ນ!");
@@ -240,7 +242,7 @@
             id: newId,
             name: document.getElementById('p-name').value, 
             price: parseInt(document.getElementById('p-price').value),
-            stock: parseInt(document.getElementById('p-stock').value) || 0, // 🆕 บันทึกค่าลงฐานข้อมูล
+            stock: parseInt(document.getElementById('p-stock').value) || 0,
             category: document.getElementById('p-category').value, 
             img: document.getElementById('p-img').value,
             desc: document.getElementById('p-desc').value, 
@@ -255,7 +257,7 @@
             loadAdminProducts();
         }).catch((error) => {
             alert("ເກີດຂໍ້ຜິດພາດ: " + error.message);
-            btn.innerText = "ບັນທຶກສິນຄ້າ (Save Product)"; btn.disabled = false;
+            btn.innerText = "ບັນທຶกສິນຄ້າ (Save Product)"; btn.disabled = false;
         });
     });
 
@@ -267,7 +269,6 @@
         });
     }
 
-    // --- ส่วนดึงข้อมูลออเดอร์และการแก้ไขเหมือนเดิม ---
     function fetchAdminOrders() {
         db.collection("orders").orderBy("createdAt", "desc").get().then(snapshot => {
             adminOrders = [];
@@ -317,10 +318,19 @@
             return; 
         }
 
+        // -------------------------------------------------------------
+        // แก้ไขส่วนนี้เพื่อให้แสดงที่อยู่จัดส่งในแถบรายการออเดอร์หน้าแรกทันที 🆕
+        // -------------------------------------------------------------
         tbody.innerHTML = filtered.map(o => `
             <tr style="${o.status === 'pending' ? 'background-color: #fffaf0;' : ''}">
                 <td><b style="color:#00D1D1;">${o.id}</b></td>
-                <td><b>${o.customer}</b><br><small style="color:#777;">${o.phone || '-'}</small></td>
+                <td>
+                    <b>👤 ລູกຄ້າ: ${o.customer}</b><br>
+                    <small style="color:#666;">📞 ເບີໂທ: ${o.phone || '-'}</small><br>
+                    <div style="margin-top: 4px; padding: 4px 6px; background: #f0f2f5; border-radius: 4px; display: inline-block; max-width: 250px; font-size: 11px; color: #444; word-break: break-all;">
+                        📍 <b>ທີ່ຢູ່:</b> ${o.address || 'ບໍ່ມີຂໍ້ມູນທີ່ຢູ່'}
+                    </div>
+                </td>
                 <td><small>${o.product}</small></td>
                 <td><span style="font-size:12px; font-weight:bold; color:${o.status === 'pending' ? '#d97706' : '#2e7d32'}">${o.status === 'shipped' ? '🟢 ສົ່ງແລ້ວ' : '🟡 ລໍສົ່ງ'}</span></td>
                 <td><button onclick="openEditOrderPanel('${o.id}')" class="btn btn-dark" style="padding:4px 8px; font-size:11px;">ຈັດການ</button></td>
@@ -334,6 +344,9 @@
         
         document.getElementById('edit-title').innerText = "EDIT ORDER: " + order.id;
         document.getElementById('edit-prod-name').innerText = order.product;
+        
+        document.getElementById('admin-order-address').value = order.address || 'ບໍ່ມີຂໍ້ມູນທີ່ຢູ່ (ไม่มีข้อมูลที่อยู่จัดส่ง)';
+        
         document.getElementById('edit-status').value = order.status;
         document.getElementById('edit-courier').value = order.courier === '-' ? 'ANS Express' : order.courier;
         document.getElementById('edit-tracking-no').value = order.trackingNo || '';
@@ -376,7 +389,7 @@
                 if(base64Receipt) { updateData.adminReceipt = base64Receipt; }
 
                 db.collection("orders").doc(currentEditingOrderId).update(updateData).then(() => {
-                    alert(`💾 ບັນທຶກການອັບເດດອໍເດີ້ສຳເລັດ!`);
+                    alert(`💾 ບັນທຶກການອັບເດດอໍເດີ້ສຳເລັດ!`);
                     btn.innerText = "💾 ບັນທຶກຂໍ້ມູນ"; btn.disabled = false;
                     closeEditPanel(); 
                     fetchAdminOrders(); 

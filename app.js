@@ -1,17 +1,31 @@
 // === Firebase Configuration ===
 const firebaseConfig = {
-    apiKey: "AIzaSyAvaNEQcqXWGDQB7PBGtHCfvNcB-OzzVFs",
-    authDomain: "t-tfahion.firebaseapp.com",
-    projectId: "t-tfahion",
-    storageBucket: "t-tfahion.firebasestorage.app",
-    messagingSenderId: "392044085352",
-    appId: "1:392044085352:web:e08f15f841533311493bdd",
-    measurementId: "G-65F0TDRXB9"
+  apiKey: "AIzaSyAvaNEQcqXWGDQB7PBGthCFvNcB-OzzVFs",
+  authDomain: "t-tfahion.firebaseapp.com",
+  projectId: "t-tfahion",
+  storageBucket: "t-tfahion.firebasestorage.app",
+  messagingSenderId: "392044085352",
+  appId: "1:392044085352:web:e08f15f841533311493bdd",
+  measurementId: "G-65F0TDRXB9"
 };
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 }
+
+// เปิดใช้งานโหมดออฟไลน์ (Offline Persistence) สำหรับ Firebase v8
+firebase.firestore().enablePersistence()
+  .catch((err) => {
+    if (err.code == 'failed-precondition') {
+        // กรณีเปิดเว็บหลายแท็บพร้อมกัน เบราว์เซอร์จะยอมให้เก็บ Cache ได้แค่แท็บเดียว
+        console.log("เปิดหลายแท็บเกินไป ระบบออฟไลน์ทำงานได้แท็บเดียว");
+    } else if (err.code == 'unimplemented') {
+        // เบราว์เซอร์ที่ใช้ไม่รองรับระบบนี้
+        console.log("เบราว์เซอร์นี้ไม่รองรับระบบออฟไลน์");
+    }
+  });
+
+// สร้างตัวแปร db เหมือนเดิม เพื่อให้โค้ดบรรทัดล่างๆ (บรรทัดที่ 22 ลงไป) ทำงานต่อได้ปกติ
 const db = firebase.firestore();
 
 let products = [];
